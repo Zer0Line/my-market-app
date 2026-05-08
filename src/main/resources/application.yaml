@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: practicum_market
+server:
+  port : 9090
