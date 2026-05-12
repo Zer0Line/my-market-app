@@ -4,8 +4,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.yandex.practicum.api.ItemAction;
+import ru.yandex.practicum.api.SortType;
 import ru.yandex.practicum.dto.ItemDto;
 import ru.yandex.practicum.service.ItemsService;
 
@@ -25,7 +28,7 @@ public class ItemsController {
     @GetMapping()
     public String getItemsDefault(
             @RequestParam(defaultValue = "") String search,
-            @RequestParam(defaultValue = "NO") String sort,
+            @RequestParam(defaultValue = "NO") SortType sort,
             @RequestParam(defaultValue = "2") int pageSize,
             @RequestParam(defaultValue = "0") int pageNumber,
             Model model) {
@@ -50,7 +53,7 @@ public class ItemsController {
     @GetMapping("items")
     public String getItems(
             @RequestParam(defaultValue = "") String search,
-            @RequestParam(defaultValue = "NO") String sort,
+            @RequestParam(defaultValue = "NO") SortType sort,
             @RequestParam(defaultValue = "2") int pageSize,
             @RequestParam(defaultValue = "0") int pageNumber,
             Model model) {
@@ -73,7 +76,31 @@ public class ItemsController {
     }
 
     @GetMapping("/items/{id}")
-    public String getItem(@PathVariable("id") Long id){
+    public String getItem(@PathVariable("id") Long id, Model model){
         var item = itemsService.getItem(id);
+        model.addAttribute("item", item);
+        return "/item";
+    }
+
+    @PostMapping("/items")
+    public String handleItemAction(
+            @RequestParam Long id,
+            @RequestParam String search,
+            @RequestParam SortType sort,
+            @RequestParam int pageNumber,
+            @RequestParam int pageSize,
+            @RequestParam ItemAction action,
+            Model model) {
+        
+        if (action == ItemAction.PLUS) {
+            itemsService.addToCart(id);
+        } else if (action == ItemAction.MINUS) {
+            itemsService.removeFromCart(id);
+        }
+
+        return "redirect:/items?search=" + search +
+                "&sort=" + sort +
+                "&pageNumber=" + pageNumber +
+                "&pageSize=" + pageSize;
     }
 }

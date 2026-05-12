@@ -5,3 +5,10 @@ CREATE TABLE items (
     price BIGINT NOT NULL,
     image_path VARCHAR(255)
 );
+
+CREATE TABLE cart (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    item_id BIGINT NOT NULL UNIQUE,
+    item_count INTEGER NOT NULL,
+    FOREIGN KEY (item_id) REFERENCES items(id)
+);

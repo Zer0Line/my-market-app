@@ -31,7 +31,7 @@ public class Item {
     @Column(nullable = false)
     private long price;
 
-    @Column(name = "image_path", length = 255)
+    @Column(name = "image_path")
     private String imagePath;
 }
 
