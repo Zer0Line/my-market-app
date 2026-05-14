@@ -7,36 +7,38 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.api.ItemAction;
 import ru.yandex.practicum.dto.ItemDto;
-import ru.yandex.practicum.service.ItemsService;
+import ru.yandex.practicum.service.CartService;
 
 import java.util.List;
 
 @Controller
 public class CartController {
 
-    private final ItemsService itemsService;
+    private final CartService cartService;
 
-    public CartController(ItemsService itemsService) {
-        this.itemsService = itemsService;
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
     }
 
     @GetMapping("/cart/items")
     public String getCartItems(Model model) {
-        List<ItemDto> cartItems = itemsService.getCartItems();
+        List<ItemDto> cartItems = cartService.getCartItems();
         model.addAttribute("items", cartItems);
+        model.addAttribute("total", cartService.calculateTotalPrice(cartItems));
         return "cart";
     }
 
     @PostMapping("/cart/items")
     public String updateCartItem(
             @RequestParam Long id,
-            @RequestParam ItemAction action,
-            Model model) {
-        
-        if (action == ItemAction.PLUS) {
-            itemsService.addToCart(id);
-        } else if (action == ItemAction.MINUS) {
-            itemsService.removeFromCart(id);
+            @RequestParam ItemAction action) {
+
+        switch (action) {
+            case PLUS -> cartService.addToCart(id);
+            case MINUS -> cartService.removeFromCart(id);
+            case DELETE -> cartService.removeItemFromCart(id);
+            case null, default -> {
+            }
         }
 
         return "redirect:/cart/items";

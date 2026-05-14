@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.api.ItemAction;
 import ru.yandex.practicum.api.SortType;
 import ru.yandex.practicum.dto.ItemDto;
+import ru.yandex.practicum.service.CartService;
 import ru.yandex.practicum.service.ItemsService;
 
 import java.util.ArrayList;
@@ -21,8 +22,12 @@ public class ItemsController {
 
     private final ItemsService itemsService;
 
-    public ItemsController(ItemsService itemsService) {
+    private final CartService cartService;
+
+    public ItemsController(ItemsService itemsService,
+                           CartService cartService) {
         this.itemsService = itemsService;
+        this.cartService = cartService;
     }
 
     @GetMapping()
@@ -32,9 +37,9 @@ public class ItemsController {
             @RequestParam(defaultValue = "2") int pageSize,
             @RequestParam(defaultValue = "0") int pageNumber,
             Model model) {
+
         var itemsPage = itemsService.getItems(search, sort, pageSize, pageNumber);
 
-        // Преобразуем список элементов в список списков по 3 элемента для корректного отображения в шаблоне
         List<ItemDto> itemsList = itemsPage.getContent();
         List<List<ItemDto>> groupedItems = new ArrayList<>();
         for (int i = 0; i < itemsList.size(); i += 3) {
@@ -46,7 +51,7 @@ public class ItemsController {
         model.addAttribute("itemCount", pageSize);
         model.addAttribute("paging", itemsPage);
         model.addAttribute("search", search);
-        model.addAttribute("sort", sort);
+        model.addAttribute("sort", sort.name());
         return "items";
     }
 
@@ -59,11 +64,10 @@ public class ItemsController {
             Model model) {
         var itemsPage = itemsService.getItems(search, sort, pageSize, pageNumber);
 
-        // Преобразуем список элементов в список списков по 3 элемента для корректного отображения в шаблоне
         List<ItemDto> itemsList = itemsPage.getContent();
         List<List<ItemDto>> groupedItems = new ArrayList<>();
-        for (int i = 0; i < itemsList.size(); i += 3) {
-            int end = Math.min(i + 3, itemsList.size());
+        for (int i = 0; i < itemsList.size(); i += pageSize) {
+            int end = Math.min(i + pageSize, itemsList.size());
             groupedItems.add(itemsList.subList(i, end));
         }
 
@@ -71,12 +75,12 @@ public class ItemsController {
         model.addAttribute("itemCount", pageSize);
         model.addAttribute("paging", itemsPage);
         model.addAttribute("search", search);
-        model.addAttribute("sort", sort);
+        model.addAttribute("sort", sort.name());
         return "items";
     }
 
     @GetMapping("/items/{id}")
-    public String getItem(@PathVariable("id") Long id, Model model){
+    public String getItem(@PathVariable("id") Long id, Model model) {
         var item = itemsService.getItem(id);
         model.addAttribute("item", item);
         return "/item";
@@ -89,13 +93,12 @@ public class ItemsController {
             @RequestParam SortType sort,
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
-            @RequestParam ItemAction action,
-            Model model) {
-        
+            @RequestParam ItemAction action) {
+
         if (action == ItemAction.PLUS) {
-            itemsService.addToCart(id);
+            cartService.addToCart(id);
         } else if (action == ItemAction.MINUS) {
-            itemsService.removeFromCart(id);
+            cartService.removeFromCart(id);
         }
 
         return "redirect:/items?search=" + search +
