@@ -4,8 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.api.PageWrapper;
 import ru.yandex.practicum.api.SortType;
-import ru.yandex.practicum.dto.ItemDto;
+import ru.yandex.practicum.api.dto.ItemDto;
 import ru.yandex.practicum.mapper.DtoMapper;
 import ru.yandex.practicum.model.Cart;
 import ru.yandex.practicum.model.Item;
@@ -41,7 +42,7 @@ public class ItemsService {
 
         return new PageWrapper<>(itemsPage.map(item -> {
             Cart cart = cartRepository.findByItemId(item.getId());
-            return DtoMapper.toItemWitCartCaountDto(cart, item);
+            return DtoMapper.toItemWitCartCountDto(cart, item);
         }));
     }
 
@@ -49,7 +50,7 @@ public class ItemsService {
          return itemRepository.findById(id)
                  .map(item -> {
                      Cart cart = cartRepository.findByItemId(item.getId());
-                     return DtoMapper.toItemWitCartCaountDto(cart, item);
+                     return DtoMapper.toItemWitCartCountDto(cart, item);
                  })
                  .orElse(null);
     }

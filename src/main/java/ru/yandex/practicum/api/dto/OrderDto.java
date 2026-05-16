@@ -1,4 +1,4 @@
-package ru.yandex.practicum.dto;
+package ru.yandex.practicum.api.dto;
 
 import java.math.BigDecimal;
 import java.util.List;

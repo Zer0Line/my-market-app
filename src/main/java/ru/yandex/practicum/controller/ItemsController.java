@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.api.ItemAction;
 import ru.yandex.practicum.api.SortType;
-import ru.yandex.practicum.dto.ItemDto;
+import ru.yandex.practicum.api.dto.ItemDto;
 import ru.yandex.practicum.service.CartService;
 import ru.yandex.practicum.service.ItemsService;
 

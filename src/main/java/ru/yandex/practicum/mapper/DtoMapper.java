@@ -1,7 +1,7 @@
 package ru.yandex.practicum.mapper;
 
-import ru.yandex.practicum.dto.ItemDto;
-import ru.yandex.practicum.dto.OrderDto;
+import ru.yandex.practicum.api.dto.ItemDto;
+import ru.yandex.practicum.api.dto.OrderDto;
 import ru.yandex.practicum.model.Cart;
 import ru.yandex.practicum.model.Item;
 import ru.yandex.practicum.model.Order;
@@ -34,7 +34,7 @@ public class DtoMapper {
         );
     }
 
-    public static ItemDto toItemWitCartCaountDto(Cart cart, Item item) {
+    public static ItemDto toItemWitCartCountDto(Cart cart, Item item) {
         int count = (cart != null) ? cart.getCount() : 0;
         return new ItemDto(
                 item.getId(),

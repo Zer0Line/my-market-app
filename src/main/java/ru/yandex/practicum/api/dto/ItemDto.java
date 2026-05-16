@@ -1,4 +1,4 @@
-package ru.yandex.practicum.dto;
+package ru.yandex.practicum.api.dto;
 
 import ru.yandex.practicum.model.Item;
 
